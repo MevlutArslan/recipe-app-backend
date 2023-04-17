@@ -29,18 +29,33 @@ with open('recipes.txt', 'r') as f:
         print(line)
         # every line is a url from nefisyemektarifleri.com
         scape_and_save(line)
-        time.sleep(10)
+        time.sleep(1)
 
-@app.get("/")
-def index():
-    return "HELLO WORLD!"
+# RECIPE ENDPOINTS
 
-@app.get("/recipe")
-def get_recipe_by_id():
+@app.get("/recipes")
+def get_recipes():
     recipes = session.query(Recipe).all()
     return jsonable_encoder(recipes)
 
-@app.get("recipe/{recipe_id}")
+@app.get("/recipes/{recipe_id}")
 def get_recipe_by_id(recipe_id):
     recipe = session.query(Recipe).filter_by(id= recipe_id).first()
     return jsonable_encoder(recipe)
+
+@app.get("/recipes_from/{author_name}")
+def get_recipes_from_author(author_name):
+    author = session.query(Author).filter_by(name=author_name).first()
+    recipes = session.query(Recipe).filter_by(author_id=author.id).all()
+    return jsonable_encoder(recipes, exclude={"author"})
+
+# AUTHOR END-POINTS
+@app.get("/authors")
+def get_authors():
+    authors = session.query(Author).all()
+    return jsonable_encoder(authors)
+
+@app.get("/authors/{author_name}")
+def get_authors_by_name(author_name):
+    authors = session.query(Author).filter_by(name=author_name.lower()).all()
+    return jsonable_encoder(authors)
