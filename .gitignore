@@ -1,5 +1,5 @@
 # Ignore virtual environment
-venv/
+recipe-app-env/
 
 # Ignore Python bytecode
 __pycache__/
