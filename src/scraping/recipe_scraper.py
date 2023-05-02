@@ -12,7 +12,7 @@ class NYT_Scraper(BaseScraper):
         self._imageUrl = img_tag['src']
 
     def scrape_yield(self):
-        self._recipeYield = self.scraper.find('span', itemprop="recipeYield").get_text()
+        self._recipeYield = self.scraper.find('span', itemprop="recipeYield").get_text().strip()
 
     def scrape_prepTime(self):
         self._prepTime = self.scraper.find('span', {'itemprop': 'prepTime'}).text.strip()

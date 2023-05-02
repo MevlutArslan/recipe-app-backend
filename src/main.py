@@ -19,7 +19,15 @@ def scape_and_save(url: str):
     else:
         author = session.query(Author).filter_by(name= author.name).first()
 
-    recipe = Recipe(name= nyt_scraper._name, author_id= author.id, ingredients= nyt_scraper._ingredients, instructions= nyt_scraper._instructions)
+    recipe = Recipe(name= nyt_scraper._name, 
+                    author_id= author.id,
+                    image_url= nyt_scraper._imageUrl,
+                    recipe_yield= nyt_scraper._recipeYield,
+                    prepTime= nyt_scraper._prepTime,
+                    cookTime= nyt_scraper._cookTime,
+                    ingredients= nyt_scraper._ingredients, 
+                    instructions= nyt_scraper._instructions)
+    
     session.add(recipe)
     session.commit()
 
