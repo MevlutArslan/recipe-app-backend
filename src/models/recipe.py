@@ -9,7 +9,7 @@ class Recipe(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = Column(String)
     image_url = Column("imageUrl", String)
-    author_id = Column(UUID(as_uuid=True), ForeignKey('authors.id'))
+    author_name = Column(String, ForeignKey('authors.name'))
     recipe_yield = Column("yield", String)
     prepTime = Column("prepTime", String)
     cookTime = Column("cookTime", String)

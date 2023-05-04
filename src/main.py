@@ -13,6 +13,7 @@ def scape_and_save(url: str):
     nyt_scraper.scrape()
 
     author = Author(name= nyt_scraper._author_name)
+
     if not session.query(Author).filter_by(name= author.name).first():
         session.add(author)
         session.commit() # need to call commit to generate the id for it.
@@ -20,7 +21,7 @@ def scape_and_save(url: str):
         author = session.query(Author).filter_by(name= author.name).first()
 
     recipe = Recipe(name= nyt_scraper._name, 
-                    author_id= author.id,
+                    author_name= author.name,
                     image_url= nyt_scraper._imageUrl,
                     recipe_yield= nyt_scraper._recipeYield,
                     prepTime= nyt_scraper._prepTime,
