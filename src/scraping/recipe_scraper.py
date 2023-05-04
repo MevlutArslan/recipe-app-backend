@@ -22,10 +22,19 @@ class NYT_Scraper(BaseScraper):
     
     def scrape_ingredients(self):
         ingredients_div = self.scraper.find("div", class_="recipe-materials-div")
-        for p_tag in ingredients_div.findAll("p", class_=""):
-            ingredients = p_tag.find_next_sibling("ul", "recipe-materials").findAll("li")
-            self._ingredients.append({p_tag.text: [ingredient.text for ingredient in ingredients]})
-           
+
+        current_subheading = None
+
+        for element in ingredients_div.children:
+            if element.name == "p" and not element.has_attr("class"):
+                current_subheading = element.text
+            elif element.name == "ul":
+                if current_subheading is None:
+                    current_subheading = "Ingredients"
+                ingredients = [li.text for li in element.findAll("li")]
+                self._ingredients.append({current_subheading: ingredients})
+                current_subheading = None
+
     
     def scrape_instructions(self):
         instructionList = self.scraper.find("ol", class_="recipe-instructions")
