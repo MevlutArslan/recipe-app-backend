@@ -1,10 +1,13 @@
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
 from scraping.recipe_scraper import NYT_Scraper
 from models.author import Author
 from models.recipe import Recipe
+from models.ar_session import ARSession, generate_qrcode
 from db import session
 from fastapi.encoders import jsonable_encoder
 import time
+
 
 app = FastAPI()
 
@@ -32,13 +35,13 @@ def scape_and_save(url: str):
     session.add(recipe)
     session.commit()
 
-with open('recipes.txt', 'r') as f:
-    for line in f.readlines():
-        line = line.strip()
-        print(line)
-        # every line is a url from nefisyemektarifleri.com
-        scape_and_save(line)
-        time.sleep(1)
+# with open('recipes.txt', 'r') as f:
+#     for line in f.readlines():
+#         line = line.strip()
+#         print(line)
+#         # every line is a url from nefisyemektarifleri.com
+#         scape_and_save(line)
+#         time.sleep(1)
 
 # RECIPE ENDPOINTS
 
@@ -68,3 +71,17 @@ def get_authors():
 def get_authors_by_name(author_name):
     authors = session.query(Author).filter_by(name=author_name.lower()).all()
     return jsonable_encoder(authors)
+
+@app.get("/ar_session/qr_code/{device_identifier}")
+def get_qrcode(device_identifier):
+    ar_session_entry = session.query(ARSession).filter_by(host_id=device_identifier).first()
+
+    if ar_session_entry != None:
+        return FileResponse(ar_session_entry.qr_code)
+    
+    new_ar_session = ARSession(host_id=device_identifier, qr_code=generate_qrcode(device_identifier))
+    
+    session.add(new_ar_session)
+    session.commit()
+
+    return FileResponse(new_ar_session.qr_code)
